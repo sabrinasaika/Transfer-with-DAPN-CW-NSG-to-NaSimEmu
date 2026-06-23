@@ -1,0 +1,123 @@
+# Fixed (static) 7-host network based on md_entry_dmz_two_subnets topology.
+# 3 subnets: 1 DMZ + 1 user subnet + 1 service subnet.
+# Topology matches md_entry_dmz_two_subnets: DMZ connects directly to both
+# user subnet and service subnet (star from DMZ, not a chain).
+#
+# Kill-chain slot assignment:
+#   slot 0 -> (1,0)  dmz_entry          ENTRY
+#   slot 1 -> (3,0)  service_target      TARGET (sensitive)
+#   slot 2 -> (2,0)  user_server         PIVOT (via user subnet)
+#   slot 3 -> (2,1)  user_worker         BRANCH
+#
+# Attack path: attacker -> DMZ(1,0) -[proftpd]-> service_target(3,0) -[drupal+pe_kernel]-> ROOT -> WIN
+
+subnets: [1, 3, 3]
+address_space_bounds: (5, 10)
+
+topology: [[ 1, 1, 0, 0],
+           [ 1, 1, 1, 1],
+           [ 0, 1, 1, 0],
+           [ 0, 1, 0, 1]]
+
+subnet_labels:
+  1: DMZ
+  2: user
+  3: service
+
+sensitive_hosts:
+  (3, 0): 100.
+
+os:
+  - linux
+  - windows
+
+services:
+  - 21_linux_proftpd
+  - 80_linux_drupal
+  - 80_linux_phpwiki
+  - 9200_windows_elasticsearch
+  - 80_windows_wp_ninja
+  - 3306_any_mysql
+
+sensitive_services:
+  - 3306_any_mysql
+
+processes:
+  - ~
+
+exploits:
+  e_proftpd:
+    service: 21_linux_proftpd
+    os: linux
+    prob: 1.0
+    cost: 1
+    access: user
+  e_drupal:
+    service: 80_linux_drupal
+    os: linux
+    prob: 1.0
+    cost: 1
+    access: user
+  e_phpwiki:
+    service: 80_linux_phpwiki
+    os: linux
+    prob: 1.0
+    cost: 1
+    access: user
+  e_elasticsearch:
+    service: 9200_windows_elasticsearch
+    os: windows
+    prob: 1.0
+    cost: 1
+    access: root
+  e_wp_ninja:
+    service: 80_windows_wp_ninja
+    os: windows
+    prob: 1.0
+    cost: 1
+    access: user
+
+privilege_escalation:
+  pe_kernel:
+    process: ~
+    os: linux
+    prob: 1.0
+    cost: 1
+    access: root
+
+service_scan_cost: 1
+os_scan_cost: 1
+subnet_scan_cost: 1
+process_scan_cost: 1
+
+host_configurations:
+  (1, 0):  # DMZ entry — Linux, proftpd  (ENTRY)
+    os: linux
+    services: [21_linux_proftpd]
+    processes: []
+  (2, 0):  # user server 0 — Linux, phpwiki  (PIVOT slot 2)
+    os: linux
+    services: [80_linux_phpwiki]
+    processes: []
+  (2, 1):  # user server 1 — Windows, wp_ninja  (BRANCH slot 3)
+    os: windows
+    services: [80_windows_wp_ninja]
+    processes: []
+  (2, 2):  # user server 2 — Linux, drupal  (extra user host)
+    os: linux
+    services: [80_linux_drupal]
+    processes: []
+  (3, 0):  # service target — Linux, drupal + mysql  (TARGET sensitive)
+    os: linux
+    services: [80_linux_drupal, 3306_any_mysql]
+    processes: []
+  (3, 1):  # service server 1 — Linux, phpwiki
+    os: linux
+    services: [80_linux_phpwiki]
+    processes: []
+  (3, 2):  # service server 2 — Windows, elasticsearch
+    os: windows
+    services: [9200_windows_elasticsearch]
+    processes: []
+
+firewall: _subnets

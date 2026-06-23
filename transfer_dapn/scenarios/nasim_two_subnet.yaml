@@ -1,0 +1,108 @@
+# NaSim scenario aligned with NSG two_networks (10 hosts, 5+5 subnets).
+#
+# Layout (subnets: [5, 5] → loader adds internet → [1, 5, 5]):
+#   Subnet 1 (clients): 5 hosts — entry at (1,0)
+#   Subnet 2 (servers): 5 hosts — target at (2,0), sensitive
+#
+# Slot assignment (kill_chain_nsg.py):
+#   slot 0  → (1,0)  entry client
+#   slot 1  → (2,0)  smb_server    TARGET
+#   slots 2-5 → (2,1)..(2,4) other servers
+#   slots 6-9 → (1,1)..(1,4) other clients
+
+subnets: [5, 5]
+address_space_bounds: (5, 10)
+
+topology: [[1, 1, 0],
+           [1, 1, 1],
+           [0, 1, 1]]
+
+sensitive_hosts:
+  (2, 0): 100
+
+os:
+  - linux
+
+services:
+  - http
+  - ssh
+
+processes:
+  - tomcat
+
+exploits:
+  e_http:
+    service: http
+    os: None
+    prob: 1.0
+    cost: 1
+    access: user
+  e_ssh:
+    service: ssh
+    os: linux
+    prob: 1.0
+    cost: 1
+    access: user
+
+privilege_escalation:
+  pe_tomcat:
+    process: tomcat
+    os: linux
+    prob: 1.0
+    cost: 1
+    access: root
+
+service_scan_cost: 1
+os_scan_cost: 1
+subnet_scan_cost: 1
+process_scan_cost: 1
+
+host_configurations:
+  (1, 0):
+    os: linux
+    services: [http, ssh]
+    processes: [tomcat]
+  (1, 1):
+    os: linux
+    services: [http]
+    processes: []
+  (1, 2):
+    os: linux
+    services: [http]
+    processes: []
+  (1, 3):
+    os: linux
+    services: [http]
+    processes: []
+  (1, 4):
+    os: linux
+    services: [http]
+    processes: []
+  (2, 0):
+    os: linux
+    services: [http, ssh]
+    processes: [tomcat]
+  (2, 1):
+    os: linux
+    services: [http, ssh]
+    processes: [tomcat]
+  (2, 2):
+    os: linux
+    services: [http, ssh]
+    processes: [tomcat]
+  (2, 3):
+    os: linux
+    services: [http, ssh]
+    processes: [tomcat]
+  (2, 4):
+    os: linux
+    services: [http, ssh]
+    processes: [tomcat]
+
+firewall:
+  (0, 1): [http]
+  (1, 0): [http]
+  (1, 2): [http, ssh]
+  (2, 1): [ssh]
+
+step_limit: 50

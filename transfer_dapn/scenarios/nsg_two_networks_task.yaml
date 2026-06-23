@@ -1,0 +1,62 @@
+# NetSecGame task config for NSG → NaSim transfer (p3).
+# Win condition (NaSim-aligned): ROOT-equivalent on smb_server (192.168.1.2) / NaSim (2,0).
+# Enforced by NSGKillChainWrapper:
+#   stage 1 — ExploitService microsoft-ds on target (≈ NaSim e_ssh / USER)
+#   stage 2 — FindData on owned target (≈ NaSim pe_tomcat / ROOT)
+# SMB exploit version patched via run_nsg_server.py (bundled NSG typo fix).
+#
+# Native goal uses an unreachable host so the wrapper controls termination timing
+# (NSG would otherwise end on first target control, before privesc).
+
+coordinator:
+  agents:
+    Attacker:
+      max_steps: 200
+      goal:
+        description: "NaSim-aligned: elevated control of smb_server (192.168.1.2), maps to ROOT on (2,0)."
+        known_networks: []
+        known_hosts: []
+        controlled_hosts:
+          - 192.168.1.99
+        known_services: {}
+        known_data: {}
+        known_blocks: {}
+      start_position:
+        known_networks: []
+        known_hosts: []
+        controlled_hosts:
+          - 192.168.2.2
+          - 213.47.23.195
+        known_services: {}
+        known_data: {}
+        known_blocks: {}
+
+    Defender:
+      goal:
+        description: "Inactive defender placeholder"
+        known_networks: []
+        known_hosts: []
+        controlled_hosts: []
+        known_services: {}
+        known_data: {}
+        known_blocks: {}
+      start_position:
+        known_networks: []
+        known_hosts: []
+        controlled_hosts: []
+        known_services: {}
+        known_data: {}
+        known_blocks: {}
+
+env:
+  scenario: two_networks
+  use_global_defender: false
+  use_dynamic_addresses: false
+  use_firewall: true
+  save_trajectories: false
+  required_players: 1
+  rewards:
+    success: 100
+    step: -1
+    fail: -10
+    false_positive: -5

@@ -1,0 +1,4 @@
+2026-06-22 20:04:26 ConfigParser WARNING [AgentRole.Attacker] Goal description 'NaSim-aligned: elevated control of smb_server (192.168.1.2), maps to ROOT on (2,0).' might be missing some actual win condition targets: ['Controlled Host: 192.168.1.99']
+2026-06-22 20:04:26 ConfigParser WARNING Item 'max_steps' not found in 'coordinator.agents.AgentRole.Defender'!. Setting value to default=None (no step limit)
+2026-06-22 20:04:26 ConfigParser WARNING Item 'max_steps' not found in 'coordinator.agents.AgentRole.Benign'!. Setting value to default=None (no step limit)
+2026-06-22 20:04:26 GameCoordinator WARNING Agent address ('127.0.0.1', 52146) not found in _agent_states. Skipping removal.

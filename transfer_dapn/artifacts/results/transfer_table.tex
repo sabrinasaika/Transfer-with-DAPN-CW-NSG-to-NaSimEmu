@@ -1,0 +1,14 @@
+\begin{table}[t]
+\centering
+\caption{DAPN cross-domain transfer. A CyberWheel-trained policy is transferred zero-shot via the domain translator $G$.}
+\label{tab:dapn-transfer}
+\begin{tabular}{lrrrr}
+\toprule
+Condition & Win rate & 95\% CI & Mean return & Episodes \\
+\midrule
+NaSim & 100.0\% & $\pm$0.9\% & 97.00 $\pm$ 0.00 & 200 \\
+DAPN -> Sim & 100.0\% & $\pm$0.9\% & 97.00 $\pm$ 0.00 & 200 \\
+DAPN -> Emulator & 100.0\% & $\pm$39.7\% & 98.00 $\pm$ 0.00 & 1 \\
+\bottomrule
+\end{tabular}
+\end{table}

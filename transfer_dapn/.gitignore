@@ -1,0 +1,22 @@
+# Training artifacts (regenerate via run_*_experiment.sh)
+artifacts/models/
+artifacts/policies/
+artifacts/logs/
+artifacts/policies/**/
+**/*.pt
+**/*.pt.best.pt
+
+# Dataset caches
+data/*.npz
+data/*.npy
+data/*.partial.npz
+artifacts/data/
+
+# Local venvs
+.venv*/
+__pycache__/
+*.pyc
+
+# Keep result plots and small JSON summaries
+!artifacts/results/
+!artifacts/results/**

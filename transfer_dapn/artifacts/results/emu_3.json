@@ -1,0 +1,19 @@
+{
+  "condition": "dapn_emu",
+  "label": "DAPN -> Emulator",
+  "episodes": 1,
+  "wins": 1,
+  "win_rate": 1.0,
+  "win_rate_ci95": 0.39672835426305353,
+  "mean_return": 98.0,
+  "std_return": 0.0,
+  "mean_steps": 2.0,
+  "wall_time_s": 244.5125768184662,
+  "returns": [
+    98.0
+  ],
+  "steps": [
+    2
+  ],
+  "note": "DAPN translator transfer on live NASimEmu emulator (MSF)"
+}

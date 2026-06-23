@@ -129,11 +129,12 @@ def _register(id, entry_point, kwargs, nondeterministic, force=True):
 
     Handles issues with re-registering gym environments.
     """
-    env_specs = gym.envs.registry.env_specs
-    if id in env_specs.keys():
+    # gym ≥0.26 removed env_specs; use registry dict directly
+    registry = getattr(gym.envs.registry, 'env_specs', gym.envs.registry)
+    if id in registry:
         if not force:
             return
-        del env_specs[id]
+        del registry[id]
     register(
         id=id,
         entry_point=entry_point,
